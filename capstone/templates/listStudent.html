@@ -1,0 +1,62 @@
+{% extends "layout.html" %}
+{% load static %}
+
+{% block body %}
+
+    <div id="myAlert">
+    </div>
+    <div class="wrapper">
+        <div class="row align-items-center h-100">
+            <div class="col-6 mx-auto">
+                <p></p>
+                Students in: <b>{{ studentList.0.course.title }}</b> class
+                <p></p>
+                {% if studentList %}
+
+                <table class="table table-striped table-bordered">
+                    <thead class="thead-dark">
+                      <tr>
+                        <th scope="col"></th>
+                        <th style="text-align:center" scope="col">Student name</th>
+                        <th style="text-align:center" scope="col">Grade %</th>
+                        <th style="text-align:center" scope="col">Update</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                        {% for student in studentList %}
+                        {% if student.student.is_teacher == True %}
+                        {% else %}
+                        <tr>
+                          <th scope="row">
+                            {{ forloop.counter }}
+                          </th>
+                        <td>
+                            {{ student.student }}
+                        </td>
+                        <td style="text-align:center">
+                            <input type="number" id="{{ student.id }}" style="text-align:center; width:5em" min="1" max="100" 
+                            value="{{ student.grade }}">
+                        </td>
+                        <td style="text-align:center">
+                            <button type="button" class="btn" onclick=updateButton({{ student.id }})><span style="color: Dodgerblue;"><i class="fa fa-2x fa-edit"></i></span></button>
+                        </td>
+                      </tr>
+                      {% endif %}
+                      {% endfor %}   
+                    </tbody>
+                  </table>
+                   
+                {% else %}
+                No enrolled student at the moment.
+                {% endif %} 
+                <p></p>
+                <a class="btn btn-primary pull-right" href="{% url 'listCourse' %}">Back to courses</a>
+             
+            </div>
+        </div>
+    </div>
+    {% block script %}
+      <script src="{% static 'grade.js' %}"></script>
+      <script>var CSRF_TOKEN = '{{ csrf_token }}';</script>
+    {% endblock %}
+{% endblock %}

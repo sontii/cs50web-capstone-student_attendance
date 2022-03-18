@@ -1,0 +1,69 @@
+{% extends "layout.html" %}
+{% load static %}
+
+{% block body %}
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %} text-center" role="alert">{{ message }}</div>
+        {% endfor %} 
+    {% endif %}
+    <div class="wrapper">
+        <div class="row align-items-center h-100">
+            <div class="col-6 mx-auto">
+                {% if request.user.is_teacher == True %}
+                    <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#addmenu" aria-expanded="false" aria-controls="collapseExample">Add new file</button>
+                    <p></p>
+                    <div class="collapse" id="addmenu">
+                        <div class="card card-body">
+                            <form method="POST" enctype="multipart/form-data">
+                                {% csrf_token %}
+                                <div class="form-group">
+                                    <label><strong>Upload Files</strong></label>
+                                    <div class="custom-file">
+                                      <input type="file" name="fileupload" multiple class="custom-file-input form-control" id="fileupload">
+                                      <label class="custom-file-label" for="customFile">Choose file</label>
+                                    </div>
+                                  </div>
+                                  <div class="form-group">
+                                    <button type="submit" id="upload" class="btn btn-block btn-dark"><i class="fa fa-fw fa-upload"></i> Upload</button>
+                                  </div>
+                            </from>
+                        </div>
+                    </div>
+                <hr class="hr">
+                <p></p>
+                {% endif %}
+                <p></p>
+                <table class="table table-striped table-bordered">
+                    <thead>
+                    <tr>
+                        <th scope="col">{{ selected_course.title }} course</th>
+                        <th scope="col">List of Notes</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                        {% for files in filelist %}
+                            {% for file in files %}
+                                <tr>
+                                    <td>
+                                        {% if request.user.is_teacher == True %}
+                                            <button value="{{ file }}" name="deleteFile" class="btn-danger"><i class="fa fa-trash"></i></button>
+                                        {% endif %}
+                                            &nbsp;&nbsp; {{ forloop.counter }}
+                                    </td>
+                                    <td>
+                                        <a href="/media/{{selected_course.id}}/{{ file }}" download>{{ file }}</a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        {% endfor %}
+                    </tbody>
+                </table>
+                <p></p>
+                <a class="btn btn-primary pull-right" href="{% url 'single_course' courseid=selected_course.id %}">Back to {{ selected_course.title }}</a> 
+            </div>
+         </div>
+
+    </div>
+    
+{% endblock %}

@@ -1,0 +1,29 @@
+{% extends "layout.html" %}
+{% load static %}
+
+{% block body %}
+    <div class="wrapper">
+        <div class="row align-items-center h-100">
+            <div class="col-6 mx-auto">
+                <p></p>
+                {% if teacherCourses %}
+                    <b>Active courses:</b>
+                    <p></p>
+                    {% for course in teacherCourses  %}
+                    <div class="list-group">
+                        <a href="{% url 'listStudent' courseid=course.course.id %}" class="list-group-item list-group-item-action">{{ course.course.title }}
+                            <small><span class="pull-right">started: <i class="fa fa-clock-o"></i> {{ course.course.started }}</span></small>
+                        </a>
+                      </div>
+                    
+                    {% endfor %} 
+                {% else %}
+                <div class="text-center">
+                    <h4>You don't have active course right now!<h4>
+                </div>
+                
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

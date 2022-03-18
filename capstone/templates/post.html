@@ -1,0 +1,21 @@
+{% extends "layout.html" %}
+{% load static %}
+
+{% block body %}
+    <div class="wrapper">
+        {% for post in post %}
+        <div class="row align-items-center h-100">
+            <div class="col-6 mx-auto">
+                <div class="postboxtitle">
+                    {{ post.title }}
+                    <div class="postbox">    
+                        {{ post.user.username }} <i class="fa fa-clock-o"></i><small> {{ post.timestamp }} </small><br>
+                        {{ post.post }}
+                    </div>
+                </div>
+        {% endfor %}       
+        <hr>
+        <a class="btn btn-primary pull-right" href="{% url 'index' %}">Back to main</a>
+        </div>
+    </div>
+{% endblock %}

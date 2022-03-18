@@ -1,0 +1,85 @@
+{% extends "layout.html" %}
+{% load static %}
+
+{% block body %}
+    <div class="wrapper">
+        <div class="row align-items-center h-100">
+            <div class="col-6 mx-auto">
+                <p></p>
+                <div class="text-center">
+                    <h4>Messages<h4>
+                </div>
+                <p></p>
+                {% if teacherList %}
+                <p></p>
+                <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#addmenu" aria-expanded="false" aria-controls="collapseExample">Send Message</button>
+                    <p></p>
+                        <div class="collapse" id="addmenu">
+                            <div class="card card-body">
+                            <form method="POST">
+                                {% csrf_token %}
+                                <div class="p-3" p-2>
+                                    To: 
+                                    <select class="custom-select mr-sm-2" id="teacherlist" name="receiver" required>
+                                        <option value="">Choose teacher</option>
+                                        {% for teacher in teacherList %}
+                                            <option value="{{ teacher }}">{{ teacher }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <p></p>
+                                    subject:
+                                    <input type="text" class="form-control" name="subject" placeholder="Subject" required><br>
+                                    message:
+                                    <textarea class="form-control" name="body" required></textarea>
+                                    <p></p>
+                                    <button class="btn btn-primary pull-right" type="submit">Send <i class="fa fa-paper-plane"></i></button>
+                                </div>
+                            </form>
+                        </div>
+                        </div>
+                <hr class="hr">
+                {% else %}
+                {% endif %}
+                <p></p>
+                {% if page_obj %}
+                <table class="table table-bordered">
+                    <thead>
+                    <tr>  
+                        <th scope="col">Sender</th>
+                        <th scope="col">Subject</th>
+                        <th scope="col">Date</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                        {% for message in page_obj  %}
+                            <tr class="tableRow" data-href="{% url 'message' messageid=message.id %}"
+                                {% if message.read == True %}style="background-color:#747982"{% endif %} >
+                                    
+                                <td>
+                                    {{message.sender}}
+                                </td>
+                                <td>
+                                    {{message.subject}}
+                                </td>
+                                <td>
+                                    {{message.date}}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <hr>
+                    <div class="text-center">    
+                        <h6>You have no messsages yet.</h6>
+                    </div>
+                {% endif %}  
+        
+            </div>
+        </div>
+    </div>
+    {% block script %}
+    <script src="{% static 'message.js' %}"></script>
+    {% endblock %}
+    
+{% endblock %}

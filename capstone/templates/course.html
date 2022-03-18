@@ -1,0 +1,55 @@
+{% extends "layout.html" %}
+{% load static %}
+
+{% block body %}
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %} text-center" role="alert">{{ message }}</div>
+        {% endfor %} 
+    {% endif %}
+    <div class="wrapper">
+        <div class="row align-items-center h-100">
+                <div class="col-6 mx-auto">
+                        <div class="postboxtitle">
+                            Course: {{ course.title }}
+                            
+                            <div class="postbox">   
+                                {% for creator in course.creator.all %}
+                                <small>created by: {{ creator }} <i class="fa fa-clock-o"></i> {{ course.started }}</small><br>
+                                {% endfor %}
+                                <span>
+                                    <small>Teacher: 
+                                    {% for teacher in courseTeacher %}
+                                        {{ teacher }}</small>
+                                    {% endfor %}
+                                </span>
+                                <hr>
+                                
+                                What you learn:<br>
+                                {{ course.description }}<br>
+                                <hr>
+                                Capacity: {{ course.capacity }}<br>
+                                Space left: {{ space_left }}
+                                
+                                {% csrf_token %}
+                                <div class="text-right" id='button_group'>
+                                </div>
+                                
+                            </div>
+                        </div>
+                        <p></p>
+                        <a class="btn btn-primary pull-right" href="{% url 'courses' %}">Back to courses</a>    
+                </div>
+         </div>
+
+    </div>
+    {{ course.id|json_script:"course_id" }}
+    {{ enrollment.id|json_script:"enrollment_id" }}
+    {{ space_left|json_script:"space_left_id" }}
+    <script>
+        var CSRF_TOKEN = '{{ csrf_token }}';
+    </script>
+    {% block script %}
+    <script src="{% static 'enroll.js' %}"></script>
+    {% endblock %}
+{% endblock %}

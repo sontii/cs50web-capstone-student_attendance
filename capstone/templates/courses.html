@@ -1,0 +1,104 @@
+{% extends "layout.html" %}
+{% load static %}
+
+{% if message %}
+        <div>You enrolled to: {{ message }}</div>
+{% endif %}
+
+
+{% block body %}
+    <div class="wrapper">
+        <div class="row align-items-center h-100">
+            <div class="col-6 mx-auto">
+                {% if request.user.is_teacher == True %}
+                    <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#addmenu" aria-expanded="false" aria-controls="collapseExample">Add new course</button>
+                    <p></p>
+                        <div class="collapse" id="addmenu">
+                            <div class="card card-body">
+                            <form method="POST">
+                                {% csrf_token %}
+                                <div class="p-3" p-2>
+                                    Title: 
+                                    <input type="text" class="form-control" name="title" placeholder="Title" required><br>
+                                    Description:
+                                    <textarea class="form-control" name="description" required></textarea>
+                                    <p></p>
+                                    Course starting date:<br>
+                                    <input type="date" value="{% now "Y-m-d" %}" name="startdate" required>
+                                    <p></p>
+                                    <select class="custom-select mr-sm-2" id="teacherlist" name="selectedteacher" required>
+                                        <option value="">Choose teacher</option>
+                                        {% for teacher in teacherlist %}
+                                            <option value="{{ teacher }}">{{ teacher }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <p></p>
+                                    Capacity:
+                                    <input type="number" name="capacity" min="1" max="50" value="1" required>
+                                    <p></p>
+                                    <button class="btn btn-primary pull-right" type="submit">Add course</button>
+                                </div>
+                            </form>
+                        </div>
+                        </div>
+                <hr class="hr">
+                {% endif %}
+            </div>
+        </div>
+        
+        <div class="row align-items-center h-100">
+                <div class="col-6 mx-auto">
+                    {% if nocourse %}
+                    <div class="text-center">
+                        <h4>No active course at the moment.<h4>
+                    </div>
+                    {% endif %}
+                    {% for course in page_obj %}
+                        <div class="postboxtitle">
+                            {{ course.title }}
+                            {% if request.user.is_teacher == True %}
+                            <span class='pull-right'><a href={% url 'students' courseid=course.id %}>Students</a></span>
+                            {% endif %}
+                            <div class="postbox">    
+                                {% for teacher in course.teacher.all %}
+                                {{ teacher }}
+                                {% endfor %}
+                                
+                                <i class="fa fa-clock-o"></i><small> {{ course.started }} </small><br>
+            
+                                {{ course.description|safe|truncatewords:"20"|linebreaks }}
+                                <a href={% url 'single_course' courseid=course.id %}>read more →</a>
+                            </div>
+                        </div>
+                        <p></p>
+                    {% endfor %}
+                    <br>
+                    <hr>
+                    <div class="pagination">
+                        <span class="step-links">
+                            <nav aria-label="Page navigation">
+                                <ul class="pagination">
+                                {% if page_obj.has_previous %}
+                                    <li class="page-item"><a class="page-link" href="?page=1">&laquo; first</a><li>
+                                    <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}">previous</a></li>
+                                {% endif %}
+                                
+                                {% for pages in page_counter  %}
+                                    <li class="page-item"><a class="page-link" href="?page={{ forloop.counter }}">{{ forloop.counter }}</a></li>
+                                {% endfor %}
+
+                                {% if page_obj.has_next %}
+                                    <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">next</a><li>
+                                    <li class="page-item"><a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a><li>
+                                {% endif %}
+                                </ul>
+                            </nav>
+
+                        </span>
+                    </div>
+                            
+                </div>
+         </div>
+
+    </div>
+{% endblock %}

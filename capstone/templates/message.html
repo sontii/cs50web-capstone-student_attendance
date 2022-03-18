@@ -1,0 +1,64 @@
+{% extends "layout.html" %}
+{% load static %}
+
+{% block body %}
+{% if messages %}
+    {% for message in messages %}
+    <div {% if message.tags %} class="text-center alert alert-{{ message.tags }}"{% endif %} role="alert">
+        {{ message }}
+    {% endfor %}
+</div>
+{% endif %}
+    <div class="wrapper">
+        <div class="row align-items-center h-100">
+            <div class="col-6 mx-auto">
+                <p></p>
+                <b>Message</b>
+                <p></p>
+                <b>Sender:</b> {{ message.sender.username }} ({{ message.sender.email }})<br>
+                <b>Subject:</b> {{ message.subject }}<br>
+                <hr>
+                <b>Body:</b><br>
+                <p></p>
+                <div text-align="center">
+                  <textarea class="textareaFill boxSizing-borderBox" readonly>{{ message.body }}</textarea>
+                <div>
+                    <p></p>
+                    {% if request.user.is_teacher == True %}
+                    <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#addmenu" aria-expanded="false" aria-controls="collapseExample"><i class="fa fa-reply"></i> Reply</button>
+                    <p></p>
+                        <div class="collapse" id="addmenu">
+                            <form method="POST">
+                                {% csrf_token %}
+                                <div class="p-3" p-2>
+                                    <div class="form-group row">
+                                        <label for="receiver" class="col-sm-2 col-form-label"><b>To:</b></label>
+                                        <div class="col-sm-10">
+                                          <input type="text" readonly class="form-control-plaintext" id="receiver" name="receiver" value="{{ message.sender.username }}">
+                                        </div>
+                                        <label for="subject" class="col-sm-2 col-form-label"><b>Subject:</b></label>
+                                        <div class="col-sm-10">
+                                          <input type="text" readonly class="form-control-plaintext" id="subject" name="subject" value="RE: {{ message.subject }}">
+                                        </div>
+                                    </div>
+                                    <p></p>
+                                    <b>Reply:</b>
+                                    <textarea name="body" class="textareaFill boxSizing-borderBox">&#13;&#10;"{{ message.sender.username }} wrote: {{ message.body }}"</textarea>
+                                    <button class="btn btn-primary pull-right" type="submit">Send <i class="fa fa-paper-plane"></i></button>
+                                    <p></p>
+                                </div>
+                                
+                            </form>
+                        </div>
+                    {% endif %}
+                <hr>
+                <p></p>
+                <a class="btn btn-primary pull-right" href="{% url 'messagesList' %}">Back to messages</a> 
+            </div>
+        </div>
+    </div>
+    {% block script %}
+        <script src="{% static 'send.js' %}"></script>
+    {% endblock %}
+    
+{% endblock %}
